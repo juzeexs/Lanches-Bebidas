@@ -6,7 +6,7 @@
   <title>Lanches & Bebidas - Delivery</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="style.css">
-</head>
+  </head>
 <body>
   <nav class="navbar">
     <div class="container navbar-container">
@@ -35,7 +35,15 @@
         <h2 class="section-title">Nosso Cardápio</h2>
         <p class="lead">Sabores incríveis que você vai amar! 😋</p>
       </div>
-      <div class="grid-3">
+
+      <div class="search-bar mb-4">
+        <div class="input-group">
+          <span class="input-group-text"><i class="fas fa-search"></i></span>
+          <input type="text" id="input-pesquisa" class="form-control" placeholder="Buscar lanches (ex: X-Burger, Batata Frita...)">
+        </div>
+      </div>
+
+      <div class="grid-3" id="lista-produtos"> 
         <div class="card">
           <img src="https://ogimg.infoglobo.com.br/rioshow/25033674-ea4-3ac/FT1086A/smash-burger.jpg" class="card-img" alt="X-Burger">
           <div class="card-body">
@@ -107,33 +115,8 @@
       </div>
     </div>
   </section>
-
     <div id="modal-overlay" class="modal-overlay hidden">
-    <div id="modal-pagamento-content" class="modal-content hidden">
-      <div class="modal-header">
-        <h4><i class="fas fa-receipt me-2"></i>Finalizar Pedido</h4>
-        <button class="btn-close" onclick="fecharModal()">&times;</button>
-      </div>
-      <div class="modal-body">
-        <div class="mb-4">
-          <h5 class="mb-3">Resumo do Pedido:</h5>
-          <pre id="texto-pedido" class="pedido-resumo"></pre>
-        </div>
-        <h5 class="mb-3">Escolha a forma de pagamento:</h5>
-        <div class="payment-options">
-          <button class="btn-outline-success" id="btn-dinheiro">
-            <i class="fas fa-money-bill-wave fa-2x"></i>
-            <div>Dinheiro</div>
-          </button>
-          <button class="btn-outline-info" id="btn-pix">
-            <i class="fas fa-qrcode fa-2x"></i>
-            <div>Pix</div>
-          </button>
-        </div>
-        <div id="qrcode" class="qrcode-area"></div>
-      </div>
     </div>
-  </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="script.js"></script>
 </body>
