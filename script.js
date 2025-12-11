@@ -530,6 +530,18 @@ function inicializarEventos() {
         inputPesquisa.addEventListener('keyup', filtrarProdutos);
     }
     
+    // 6. NOVO: Listener para fechar o menu ao clicar em um link (para mobile)
+    // Presume-se que os links da nav estão dentro de '#navbar-menu' e que eles têm a classe 'nav-link'
+    const navLinks = document.querySelectorAll('#navbar-menu a.nav-link');
+    if (navLinks.length > 0 && navbarMenu) {
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                // Remove a classe 'active' para fechar o menu, fazendo o 'sanduíche' subir.
+                navbarMenu.classList.remove('active'); 
+            });
+        });
+    }
+    
     // Inicializa o contador
     atualizarContadorPedidos();
 }

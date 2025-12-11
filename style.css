@@ -29,6 +29,10 @@ body {
   line-height: 1.6;
 }
 
+p{
+ font-size: 14px;
+}
+
 /* --- Layout System (Substituindo Bootstrap Grid) --- */
 .container {
   width: 100%;
@@ -76,7 +80,7 @@ body {
 }
 
 .navbar-brand {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: bold;
   text-decoration: none;
   background: linear-gradient(45deg, var(--primary), var(--secondary));
@@ -120,18 +124,13 @@ body {
 }
 
 .hero-section {
-    /* O overlay escuro + sua imagem de fundo */
-    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('sua-imagem-de-comida.jpg');
-    
-    background-size: cover; /* Faz com que a imagem cubra toda a seção */
-    background-position: center; /* Centraliza a imagem */
-    background-repeat: no-repeat; /* Evita que a imagem se repita */
-    
-    color: white; /* Cor do texto para contraste */
-    padding: 150px 0; /* Aumenta o espaçamento para uma seção maior */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('Img.png');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 100px 0;
 }
 
-/* Você pode precisar ajustar a cor do seu botão (btn-hero) para que ele se destaque no fundo escuro */
 .btn-hero {
     /* Exemplo: Botão com fundo claro e texto escuro, ou borda para destaque */
     background-color: #ffc107; /* Amarelo/laranja de destaque */
@@ -183,64 +182,98 @@ body {
 }
 
 .stat-number {
-  font-size: 2.5rem;
+  font-size: 1.5rem;
   font-weight: bold;
   color: var(--primary);
   margin-bottom: 5px;
 }
 
+ /* CONTAINER PRINCIPAL DO CARROSSEL */
 .carousel-container {
-  position: relative;
+  /* Usando viewport units para dimensões responsivas */
   width: 100vw;
-  height: 55vh;
-  max-width: none;
-  margin: 0;
+  height: 55vh; 
+  /* Remove propriedades redundantes ou desnecessárias */
+  max-width: 100%; /* max-width: none é implícito ou desnecessário com 100vw */
+  margin: 0 auto; /* O auto aqui garante centralização se você mudar width para algo < 100vw */
   overflow: hidden;
+  position: relative; /* Essencial para posicionar os botões */
+  /* Mantido o box-shadow: none se for a intenção, mas deixei explícito para clareza */
   box-shadow: none;
 }
 
-/* Seu CSS */
+/* TRACK DAS IMAGENS (A FAIXA QUE SE MOVE) */
 .carousel-track {
   display: flex;
   height: 100%; 
-  /* Adicione esta linha: */
+  /* Configuração da Transição: Mantive o seu, que está correto. */
   transition: transform 0.5s ease-in-out; 
 }
-/* O resto do seu CSS... */
 
-
+/* SLIDE INDIVIDUAL */
 .carousel-slide {
-  min-width: 100%;
+  /* Garante que o slide ocupe toda a largura visível do container */
+  flex: 0 0 100%; /* Equivalente a flex-grow: 0; flex-shrink: 0; flex-basis: 100%; */
+  min-width: 100%; /* Redundante com flex-basis: 100% mas mantido por garantia */
   height: 100%;
 }
 
+/* IMAGEM DENTRO DO SLIDE */
 .carousel-slide img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  /* Melhor para preencher o container sem distorção */
+  object-fit: cover; 
   object-position: center;
+  /* Adicionei 'display: block;' para remover possíveis margens/espaços sob a imagem, 
+     comuns em elementos inline */
+  display: block;
 }
 
+/* BOTÕES DE NAVEGAÇÃO (PRÉVIO/PRÓXIMO) */
 .carousel-btn {
+  /* Posicionamento e Alinhamento */
   position: absolute;
   top: 50%;
-  transform: translateY(-50%);
-  color: white;
-  border: 3px solid white;
-  background: rgba(0, 0, 0, 0.5);
-  padding: 15px 20px;
-  cursor: pointer;
-  font-size: 24px;
-  border-radius: 100px;
+  transform: translateY(-50%); /* Garante centralização vertical exata */
   z-index: 10;
+  
+  /* Estilo e Acessibilidade */
+  background: rgba(0, 0, 0, 0.6); /* Levemente mais escuro para melhor contraste */
+  color: white;
+  border: 2px solid white; /* Borda um pouco mais fina para um visual mais limpo */
+  padding: 12px 18px; /* Padding levemente ajustado */
+  cursor: pointer;
+  font-size: 20px; /* Fonte levemente menor */
+  line-height: 1; /* Garante que o texto/ícone esteja centralizado verticalmente */
+  border-radius: 150px; /* Melhor usar 50% para um círculo perfeito */
+  
+  /* Efeito de Transição (Opcional, mas melhora a experiência) */
+  transition: all 0.2s ease-in-out; 
+}
+
+/* Efeitos Interativos */
+.carousel-btn:hover {
+  border-color: rgb(255, 153, 0);
+}
+
+.carousel-btn:focus {
+  /* Importante para acessibilidade: destaca o botão quando focado via teclado */
+  outline: 3px solid rgb(255, 153, 0); 
+  outline-offset: 2px;
 }
 
 .carousel-btn:active {
-  border: 3px solid rgb(255, 153, 0);
+  /* Efeito ao clicar */
+  border: 2px solid white; 
+  background: rgba(255, 153, 0, 1); /* Fundo sólido para um clique visualmente forte */
+  transform: translateY(-50%) scale(0.95); /* Pequeno efeito de 'pressão' */
 }
 
+/* Posicionamento Específico dos Botões */
 .btn-prev { left: 20px; }
 .btn-next { right: 20px; }
+
 
 /* --- Menu / Cards --- */
 .menu-section {
@@ -248,10 +281,11 @@ body {
   background: var(--light);
 }
 
-.section-header { margin-bottom: 50px; }
+.section-header { margin-bottom: 50px;
+}
 
 .section-title {
-  font-size: 2rem;
+  font-size: 1.5rem;
   position: relative;
   display: inline-block;
   color: #333;
@@ -662,7 +696,7 @@ footer {
     width: 100%;
   }
 
-  .hero-title { font-size: 1.2rem; }
+  .hero-title { font-size: 20px; }
   
   .form-grid { grid-template-columns: 1fr; }
   .form-group.full-width { grid-column: span 1; }

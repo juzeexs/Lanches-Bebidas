@@ -31,16 +31,12 @@
       </div>
     </div>
   </nav>
-<section id="home" class="hero-section" style="
-    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('Img.png');
-    background-size: cover;
-    background-position: center;
-    color: white; /* Garante que o texto seja branco para contrastar com o fundo escuro */
-    padding: 100px 0; /* Adiciona algum espaçamento para que a imagem seja visível */
-">
+<section id="home" class="hero-section">
     <div class="container text-center">
-      <h1 class="hero-title">🍔 Bem-vindo ao Lanches & Bebidas!</h1>
+      <h1 class="hero-title">Bem-vindo ao Lanches & Bebidas!</h1>
       <p class="hero-subtitle">Os melhores sabores, entregues com carinho na sua porta! 🚀</p>
+
+<br>
       <a href="cardapio.html" class="btn btn-hero">
         <i class="fas fa-utensils me-2"></i>Explorar Cardápio
       </a>
@@ -69,24 +65,53 @@
     </div>
   </section>
   </section>
-    <section class="carousel-container">
-    <div class="carousel-track">
-      <div class="carousel-slide">
-        <img src="https://blog.connectplug.com.br/wp-content/uploads/2018/05/group-friends-eating-together-scaled.jpg" alt="Amigos comendo">
+<section 
+  class="carousel-container" 
+  aria-label="Galeria de Imagens Promocionais" 
+  role="region"
+>
+    <div class="carousel-track" id="carousel-track">
+      <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="1 de 4">
+        <img src="https://blog.connectplug.com.br/wp-content/uploads/2018/05/group-friends-eating-together-scaled.jpg" alt="Grupo de amigos felizes comendo em uma mesa de restaurante" loading="lazy">
       </div>
-      <div class="carousel-slide">
-        <img src="https://cms-cdn.saipos.com/assets/2023/03/10/Fale-com-um-vendedor_uid_640b7e4382273.png" alt="Hamburguer Artesanal">
+      <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="4 de 4">
+        <img src="https://blog.connectplug.com.br/wp-content/uploads/2018/05/group-friends-eating-together-scaled.jpg" alt="Grupo de amigos felizes comendo em uma mesa de restaurante" loading="lazy">
       </div>
-      <div class="carousel-slide">
-        <img src="https://cms-cdn.saipos.com/assets/2023/03/10/Fale-com-um-vendedor_uid_640b7e4382273.png" alt="Hamburguer Artesanal">
+<div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="1 de 4">
+        <img src="https://blog.connectplug.com.br/wp-content/uploads/2018/05/group-friends-eating-together-scaled.jpg" alt="Grupo de amigos felizes comendo em uma mesa de restaurante" loading="lazy">
       </div>
-      <div class="carousel-slide">
-        <img src="https://blog.connectplug.com.br/wp-content/uploads/2018/05/group-friends-eating-together-scaled.jpg" alt="Amigos comendo">
+      <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="4 de 4">
+        <img src="https://blog.connectplug.com.br/wp-content/uploads/2018/05/group-friends-eating-together-scaled.jpg" alt="Grupo de amigos felizes comendo em uma mesa de restaurante" loading="lazy">
       </div>
-     </div>
-     <button class="carousel-btn btn-prev" id="prevBtn">&#10094;</button>
-     <button class="carousel-btn btn-next" id="nextBtn">&#10095;</button>
-    </section>
+<div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="1 de 4">
+        <img src="https://blog.connectplug.com.br/wp-content/uploads/2018/05/group-friends-eating-together-scaled.jpg" alt="Grupo de amigos felizes comendo em uma mesa de restaurante" loading="lazy">
+      </div>
+      <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="4 de 4">
+        <img src="https://blog.connectplug.com.br/wp-content/uploads/2018/05/group-friends-eating-together-scaled.jpg" alt="Grupo de amigos felizes comendo em uma mesa de restaurante" loading="lazy">
+      </div>
+    </div>
+    
+    <button 
+        class="carousel-btn btn-prev" 
+        id="prevBtn" 
+        data-target="prev" 
+        aria-controls="carousel-track" 
+        aria-label="Slide anterior"
+    >
+        &#10094;
+    </button>
+    
+    <button 
+        class="carousel-btn btn-next" 
+        id="nextBtn" 
+        data-target="next" 
+        aria-controls="carousel-track" 
+        aria-label="Próximo slide"
+    >
+        &#10095;
+    </button>
+    
+</section>
   <section id="destaques" class="features-section">
     <div class="container">
       <div class="section-header text-center text-white">
