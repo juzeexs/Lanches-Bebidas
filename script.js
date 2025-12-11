@@ -1,24 +1,18 @@
-// VARIÁVEL GLOBAL PARA O CARRINHO
 let carrinho = [];
 
-// ===================================
-// FUNÇÕES DE MANIPULAÇÃO DO CARRINHO
-// ===================================
+
 
 /**
- * Adiciona um item ao carrinho ou aumenta a quantidade se já existir.
- * @param {string} nome - Nome do produto.
- * @param {number} preco - Preço do produto.
+ * 
+ * @param {string} nome 
+ * @param {number} preco 
  */
 function adicionarAoCarrinho(nome, preco) {
-    // Tenta encontrar o item no carrinho
     const itemExistente = carrinho.find(item => item.nome === nome);
 
     if (itemExistente) {
-        // Se existir, aumenta a quantidade
         itemExistente.quantidade++;
     } else {
-        // Se não existir, adiciona como novo item
         carrinho.push({
             nome: nome,
             preco: preco,
@@ -26,17 +20,15 @@ function adicionarAoCarrinho(nome, preco) {
         });
     }
 
-    // Atualiza o contador e renderiza o modal
     atualizarContadorPedidos();
-    // Verifica se o modal está aberto antes de tentar renderizar, para evitar erros
     if (document.getElementById('modal-overlay') && !document.getElementById('modal-overlay').classList.contains('hidden')) {
         renderizarPedidosModal();
     }
 }
 
 /**
- * Remove um item completamente do carrinho.
- * @param {string} nome - Nome do produto a ser removido.
+ * 
+ * @param {string} nome 
  */
 function removerItem(nome) {
     carrinho = carrinho.filter(item => item.nome !== nome);
@@ -45,9 +37,9 @@ function removerItem(nome) {
 }
 
 /**
- * Ajusta a quantidade de um item específico no carrinho.
- * @param {string} nome - Nome do produto.
- * @param {number} delta - Valor a ser adicionado ou subtraído da quantidade (+1 ou -1).
+ * 
+ * @param {string} nome 
+ * @param {number} delta 
  */
 function ajustarQuantidade(nome, delta) {
     const item = carrinho.find(item => item.nome === nome);
@@ -55,10 +47,9 @@ function ajustarQuantidade(nome, delta) {
     if (item) {
         item.quantidade += delta;
 
-        // Se a quantidade cair para 0 ou menos, remove o item
         if (item.quantidade <= 0) {
             removerItem(nome);
-            return; // Sai da função para evitar chamar a renderização duas vezes se remover
+            return;
         }
     }
 
@@ -67,32 +58,23 @@ function ajustarQuantidade(nome, delta) {
 }
 
 /**
- * Calcula e retorna o total do carrinho.
- * @returns {number} O valor total de todos os itens no carrinho.
+ * 
+ * @returns {number}
  */
 function calcularTotal() {
     return carrinho.reduce((total, item) => total + (item.preco * item.quantidade), 0);
 }
 
-/**
- * Atualiza o número de itens totais exibidos no ícone do carrinho.
- */
 function atualizarContadorPedidos() {
     const contador = document.getElementById('contador-pedidos');
-    if (!contador) return; // Garante que o elemento existe
+    if (!contador) return;
     
-    // Soma a quantidade de todos os itens no carrinho
     const totalItens = carrinho.reduce((acc, item) => acc + item.quantidade, 0);
     contador.textContent = totalItens;
 }
 
-// ===================================
-// FUNÇÕES DE RENDERIZAÇÃO E MODAL
-// ===================================
 
-/**
- * Cria e exibe o modal de pedidos (carrinho).
- */
+ 
 function exibirModalPedidos() {
     const overlay = document.getElementById('modal-overlay');
     
@@ -101,13 +83,11 @@ function exibirModalPedidos() {
         return;
     }
 
-    // Cria o corpo principal do modal
     const modal = document.createElement('div');
     modal.classList.add('modal-content');
     modal.setAttribute('aria-modal', 'true');
     modal.setAttribute('role', 'dialog');
 
-    // Cabeçalho do modal
     modal.innerHTML = `
         <div class="modal-header">
             <h3 class="modal-title"><i class="fas fa-shopping-cart me-2"></i>Seus Pedidos</h3>
@@ -123,37 +103,28 @@ function exibirModalPedidos() {
         </div>
     `;
 
-    // Limpa o overlay e anexa o novo modal
     overlay.innerHTML = '';
     overlay.appendChild(modal);
     overlay.classList.remove('hidden');
-    
-    // Adiciona evento para fechar o modal
     document.getElementById('fechar-modal').addEventListener('click', fecharModal);
 
-    // Adiciona evento para finalizar o pedido
     document.getElementById('btn-finalizar-pedido').addEventListener('click', exibirFormularioFinalizacao);
 
-    // Renderiza o conteúdo do carrinho
     renderizarPedidosModal();
 }
 
-/**
- * Preenche o corpo do modal com os itens do carrinho.
- */
+
 function renderizarPedidosModal() {
     const corpoModal = document.getElementById('corpo-modal-pedidos');
     const totalElement = document.getElementById('total-carrinho');
     const btnFinalizar = document.getElementById('btn-finalizar-pedido');
     
-    if (!corpoModal || !totalElement || !btnFinalizar) return; // Garante que os elementos existem
+    if (!corpoModal || !totalElement || !btnFinalizar) return; 
 
     const total = calcularTotal();
 
-    // Atualiza o total
     totalElement.textContent = `Total: R$ ${total.toFixed(2).replace('.', ',')}`;
     
-    // Habilita/Desabilita o botão de finalização
     btnFinalizar.disabled = carrinho.length === 0;
 
     if (carrinho.length === 0) {
@@ -161,7 +132,6 @@ function renderizarPedidosModal() {
         return;
     }
 
-    // Cria a lista de itens
     let htmlItens = '<ul class="lista-carrinho">';
     carrinho.forEach(item => {
         const subtotal = (item.preco * item.quantidade).toFixed(2).replace('.', ',');
@@ -183,7 +153,6 @@ function renderizarPedidosModal() {
 
     corpoModal.innerHTML = htmlItens;
 
-    // Adiciona event listeners aos botões de controle de quantidade e remoção
     corpoModal.querySelectorAll('.btn-qty').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const nome = e.currentTarget.dataset.nome;
@@ -205,7 +174,7 @@ function renderizarPedidosModal() {
 }
 
 /**
- * Fecha o modal.
+ * 
  */
 function fecharModal() {
     const overlay = document.getElementById('modal-overlay');
@@ -215,7 +184,7 @@ function fecharModal() {
 }
 
 /**
- * Muda o conteúdo do modal para o formulário de finalização.
+ * 
  */
 function exibirFormularioFinalizacao() {
     const corpoModal = document.getElementById('corpo-modal-pedidos');
@@ -223,7 +192,6 @@ function exibirFormularioFinalizacao() {
 
     if (!corpoModal || !footerModal) return;
 
-    // Desativa o botão de finalizar (ele será substituído por um botão de envio do form)
     footerModal.style.display = 'none';
 
     corpoModal.innerHTML = `
@@ -265,7 +233,6 @@ function exibirFormularioFinalizacao() {
         </form>
     `;
 
-    // Adiciona listener para mostrar/esconder campo de troco
     document.getElementById('pagamento').addEventListener('change', (e) => {
         const trocoGroup = document.querySelector('.troco-group');
         const inputTroco = document.getElementById('troco');
@@ -280,18 +247,16 @@ function exibirFormularioFinalizacao() {
         }
     });
 
-    // Adiciona listener para o envio do formulário
     document.getElementById('form-finalizacao').addEventListener('submit', finalizarPedido);
 }
 
 /**
- * Processa a finalização do pedido, gera o resumo e o QR Code.
- * @param {Event} e - Evento de submissão do formulário.
+ * 
+ * @param {Event} e 
  */
 function finalizarPedido(e) {
     e.preventDefault();
 
-    // Coleta os dados do formulário
     const nomeCliente = document.getElementById('nome-cliente').value;
     const endereco = document.getElementById('endereco').value;
     const complemento = document.getElementById('complemento').value;
@@ -300,7 +265,6 @@ function finalizarPedido(e) {
     const troco = document.getElementById('troco').value;
     const total = calcularTotal();
 
-    // Monta o resumo do pedido
     const resumoItens = carrinho.map(item => 
         `${item.quantidade}x ${item.nome} (R$ ${item.preco.toFixed(2).replace('.', ',')} cada)`
     ).join('\n');
@@ -330,15 +294,13 @@ function finalizarPedido(e) {
     resumoPedido += `\n*=====================================*\n`;
     resumoPedido += `*Aguarde a confirmação do nosso delivery!*`;
 
-
-    // Exibe a tela de confirmação/QR Code
     exibirConfirmacao(resumoPedido, total);
 }
 
 /**
- * Exibe a tela de confirmação com o resumo do pedido e QR Code (simulação).
- * @param {string} resumoPedido - O texto formatado do resumo do pedido.
- * @param {number} total - O valor total do pedido.
+ * 
+ * @param {string} resumoPedido 
+ * @param {number} total
  */
 function exibirConfirmacao(resumoPedido, total) {
     const corpoModal = document.getElementById('corpo-modal-pedidos');
@@ -347,10 +309,8 @@ function exibirConfirmacao(resumoPedido, total) {
     
     if (!corpoModal || !modalContent) return;
 
-    // Esconde o footer (se não estiver escondido)
     if (footerModal) footerModal.style.display = 'none';
 
-    // Cria o HTML de confirmação
     corpoModal.innerHTML = `
         <div class="confirmacao-pedido text-center">
             <i class="fas fa-check-circle text-success mb-3" style="font-size: 4rem;"></i>
@@ -371,11 +331,7 @@ function exibirConfirmacao(resumoPedido, total) {
         </button>
     `;
 
-    // Redimensiona o modal para a nova tela
     modalContent.style.maxWidth = '500px';
-
-    // Gera o QR Code (usando o resumo do pedido como conteúdo)
-    // ATENÇÃO: A CLASSE 'QRCode' PRECISA SER INCLUÍDA NO SEU HTML VIA TAG <SCRIPT>!
     if (typeof QRCode !== 'undefined') {
         new QRCode(document.getElementById("qrcode"), {
             text: resumoPedido,
@@ -390,18 +346,10 @@ function exibirConfirmacao(resumoPedido, total) {
         console.error("A biblioteca 'qrcode.js' não está carregada. O QR Code não será gerado.");
     }
 
-    // Limpa o carrinho após a finalização
     carrinho = [];
     atualizarContadorPedidos();
 }
 
-// ===================================
-// FUNÇÕES DE UTILIDADE E INICIALIZAÇÃO
-// ===================================
-
-/**
- * Função de pesquisa/filtro de produtos.
- */
 function filtrarProdutos() {
     const input = document.getElementById('input-pesquisa');
     const listaProdutos = document.getElementById('lista-produtos');
@@ -415,7 +363,6 @@ function filtrarProdutos() {
         const titulo = card.querySelector('.card-title')?.textContent.toLowerCase() || '';
         const texto = card.querySelector('.card-text')?.textContent.toLowerCase() || '';
         
-        // Exibe o card se o filtro corresponder ao título ou ao texto
         if (titulo.includes(filtro) || texto.includes(filtro)) {
             card.style.display = 'block';
         } else {
@@ -424,39 +371,28 @@ function filtrarProdutos() {
     });
 }
 
-// ===================================
-// LÓGICA DO CARROSSEL INFINITO (INTEGRADA)
-// ===================================
-
 function inicializarCarrossel() {
     const track = document.querySelector('.carousel-track');
     const slides = Array.from(document.querySelectorAll('.carousel-slide'));
     const buttons = document.querySelectorAll('.carousel-btn');
 
     if (!track || slides.length === 0) {
-        // console.log("Carrossel não encontrado ou sem slides. Ignorando inicialização.");
-        return; // Sai se os elementos do carrossel não existirem
+        return;
     }
     
     const slideCount = slides.length;
     let currentSlideIndex = 0;
     
-    // Adiciona a propriedade transition-duration para animação suave
     track.style.transitionDuration = '0.5s'; 
     track.style.transitionTimingFunction = 'ease-in-out';
-
-    // Função principal para mover o carrossel
     const moveToSlide = (newIndex) => {
-        // Lógica MÓDULO (%) para loop infinito
         currentSlideIndex = (newIndex % slideCount + slideCount) % slideCount;
         
         const offset = -(currentSlideIndex * 100);
-        
-        // Aplica a transformação
+
         track.style.transform = `translateX(${offset}%)`;
     };
 
-    // Adiciona event listeners aos botões
     buttons.forEach(button => {
         button.addEventListener('click', e => {
             const target = e.currentTarget.dataset.target;
@@ -473,22 +409,12 @@ function inicializarCarrossel() {
     });
 }
 
-// ===================================
-// FUNÇÃO DE INICIALIZAÇÃO PRINCIPAL
-// ===================================
-
-/**
- * Configura todos os event listeners ao carregar a página.
- */
 function inicializarEventos() {
-    // 1. Inicializa a lógica do Carrossel (SE EXISTIR)
     inicializarCarrossel();
     
-    // 2. Listeners para adicionar ao carrinho
     document.querySelectorAll('.btn-comprar').forEach(button => {
         button.addEventListener('click', (e) => {
             const nome = e.currentTarget.dataset.item;
-            // Garante que o preço seja um número (parse para float)
             const preco = parseFloat(e.currentTarget.dataset.preco); 
             
             if (isNaN(preco)) {
@@ -498,7 +424,6 @@ function inicializarEventos() {
 
             adicionarAoCarrinho(nome, preco);
             
-            // Feedback visual (opcional)
             e.currentTarget.innerHTML = '<i class="fas fa-check me-2"></i>Adicionado!';
             setTimeout(() => {
                 e.currentTarget.innerHTML = '<i class="fas fa-cart-plus me-2"></i>Adicionar';
@@ -506,7 +431,6 @@ function inicializarEventos() {
         });
     });
 
-    // 3. Listener para abrir o modal de pedidos
     const linkPedidos = document.getElementById('link-pedidos');
     if (linkPedidos) {
         linkPedidos.addEventListener('click', (e) => {
@@ -515,7 +439,6 @@ function inicializarEventos() {
         });
     }
 
-    // 4. Listener para o botão de toggle do menu (mobile)
     const toggleButton = document.getElementById('menu-toggle');
     const navbarMenu = document.getElementById('navbar-menu');
     if (toggleButton && navbarMenu) {
@@ -524,27 +447,21 @@ function inicializarEventos() {
         });
     }
 
-    // 5. Listener para a pesquisa
     const inputPesquisa = document.getElementById('input-pesquisa');
     if (inputPesquisa) {
         inputPesquisa.addEventListener('keyup', filtrarProdutos);
     }
     
-    // 6. NOVO: Listener para fechar o menu ao clicar em um link (para mobile)
-    // Presume-se que os links da nav estão dentro de '#navbar-menu' e que eles têm a classe 'nav-link'
     const navLinks = document.querySelectorAll('#navbar-menu a.nav-link');
     if (navLinks.length > 0 && navbarMenu) {
         navLinks.forEach(link => {
             link.addEventListener('click', () => {
-                // Remove a classe 'active' para fechar o menu, fazendo o 'sanduíche' subir.
                 navbarMenu.classList.remove('active'); 
             });
         });
     }
     
-    // Inicializa o contador
     atualizarContadorPedidos();
 }
 
-// Inicializa os eventos quando o DOM estiver completamente carregado
 document.addEventListener('DOMContentLoaded', inicializarEventos);
