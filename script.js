@@ -218,7 +218,7 @@ class CarrinhoCompras {
           <div class="form-group col-3">
             <label>&nbsp;</label>
             <button type="button" class="btn-buscar-cep" onclick="carrinho.buscarCEP()">
-              <i class="fas fa-search"></i>
+              <i>Buscar CEP</i>
             </button>
           </div>
         </div>
