@@ -547,70 +547,47 @@ input:valid:not(:placeholder-shown){border-color:#28a745}
 document.head.appendChild(style);
 
 // ========================================
-// CARROSSEL
+// CARROSSEL (VERSÃO SIMPLIFICADA)
 // ========================================
 function inicializarCarrossel() {
   const track = document.getElementById('carousel-track');
   const btnPrev = document.getElementById('prevBtn');
   const btnNext = document.getElementById('nextBtn');
-  if (!track || !btnPrev || !btnNext) return;
+  const slides = track?.querySelectorAll('.carousel-slide');
+
+  if (!track || !btnPrev || !btnNext || !slides.length) return;
   
   let currentIndex = 0;
-  const slides = track.querySelectorAll('.carousel-slide');
   const totalSlides = slides.length;
-  let autoPlayInterval;
-  
-  function updateCarousel(smooth = true) {
-    track.style.transition = smooth ? 'transform 0.5s ease-in-out' : 'none';
+
+  function updateCarousel() {
+    // Aplica o deslocamento baseado no índice atual
+    track.style.transition = 'transform 0.5s ease-in-out';
     track.style.transform = `translateX(${-currentIndex * 100}%)`;
   }
-  
+
   function irParaProximo() {
-    currentIndex++;
+    // Se chegar no último, volta para o 0 automaticamente
+    currentIndex = (currentIndex + 1) % totalSlides;
     updateCarousel();
-    if (currentIndex >= totalSlides) {
-      setTimeout(() => {
-        currentIndex = 0;
-        updateCarousel(false);
-      }, 500);
-    }
   }
-  
+
   function irParaAnterior() {
-    if (currentIndex === 0) {
-      currentIndex = totalSlides;
-      updateCarousel(false);
-      setTimeout(() => {
-        currentIndex = totalSlides - 1;
-        updateCarousel();
-      }, 20);
-    } else {
-      currentIndex--;
-      updateCarousel();
-    }
+    // Se estiver no 0, volta para o último
+    currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+    updateCarousel();
   }
-  
-  function startAutoPlay() {
-    autoPlayInterval = setInterval(irParaProximo, 5000);
-  }
-  
-  function resetAutoPlay() {
-    clearInterval(autoPlayInterval);
-    startAutoPlay();
-  }
-  
-  btnNext.addEventListener('click', () => {
-    irParaProximo();
-    resetAutoPlay();
-  });
-  
-  btnPrev.addEventListener('click', () => {
-    irParaAnterior();
-    resetAutoPlay();
-  });
-  
-  updateCarousel(false);
-  startAutoPlay();
+
+  // Auto-play simples
+  let autoPlay = setInterval(irParaProximo, 5000);
+
+  const resetTimer = () => {
+    clearInterval(autoPlay);
+    autoPlay = setInterval(irParaProximo, 5000);
+  };
+
+  btnNext.addEventListener('click', () => { irParaProximo(); resetTimer(); });
+  btnPrev.addEventListener('click', () => { irParaAnterior(); resetTimer(); });
 }
 
 // ========================================
