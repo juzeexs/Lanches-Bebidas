@@ -1,4 +1,4 @@
-# Lanches & Bebidas 🍔🥤
+# Lanches & Bebidas 🍔
 
 Um sistema de delivery moderno, rápido e responsivo desenvolvido com tecnologias web fundamentais. O projeto simula a experiência completa de um usuário, desde a navegação no cardápio até o checkout final com integração de mapas.
 
