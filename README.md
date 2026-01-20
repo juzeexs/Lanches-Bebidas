@@ -1,4 +1,4 @@
-# 🍔 Lanches & Bebidas - Delivery System
+# Lanches & Bebidas 🍔🥤
 
 Um sistema de delivery moderno, rápido e responsivo desenvolvido com tecnologias web fundamentais. O projeto simula a experiência completa de um usuário, desde a navegação no cardápio até o checkout final com integração de mapas.
 
@@ -33,8 +33,6 @@ Um sistema de delivery moderno, rápido e responsivo desenvolvido com tecnologia
 * `style.css`: Estilos globais, animações de entrada e responsividade.
 * `script.js`: O "cérebro" da aplicação (Gerenciamento do Carrinho, Checkout e Busca).
 
-## 💻 Como visualizar o projeto
+## Link do Projeto
 
-1. Faça o clone do repositório:
-   ```bash
-   git clone [https://github.com/seu-usuario/nome-do-repositorio.git](https://github.com/seu-usuario/nome-do-repositorio.git)
+
