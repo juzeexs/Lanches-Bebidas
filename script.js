@@ -1,6 +1,3 @@
-// ========================================
-// CARRINHO DE COMPRAS
-// ========================================
 class CarrinhoCompras {
   constructor() {
     this.itens = [];
@@ -546,9 +543,6 @@ input:valid:not(:placeholder-shown){border-color:#28a745}
 `;
 document.head.appendChild(style);
 
-// ========================================
-// CARROSSEL (VERSÃO SIMPLIFICADA)
-// ========================================
 function inicializarCarrossel() {
   const track = document.getElementById('carousel-track');
   const btnPrev = document.getElementById('prevBtn');
@@ -871,3 +865,45 @@ document.addEventListener('DOMContentLoaded', () => {
   carrinho.atualizarContador();
   console.log('🍔 Sistema de Delivery inicializado!');
 });
+
+// Gerir o Modal de Login
+const modalLogin = document.getElementById('modal-login');
+const linkLogin = document.getElementById('link-login');
+const btnFecharLogin = document.getElementById('fechar-login');
+const formLogin = document.getElementById('form-login');
+
+if (linkLogin) {
+  linkLogin.addEventListener('click', (e) => {
+    e.preventDefault();
+    modalLogin.classList.remove('hidden');
+  });
+}
+
+if (btnFecharLogin) {
+  btnFecharLogin.addEventListener('click', () => {
+    modalLogin.classList.add('hidden');
+  });
+}
+
+// Fechar ao clicar fora do modal
+window.addEventListener('click', (e) => {
+  if (e.target === modalLogin) {
+    modalLogin.classList.add('hidden');
+  }
+});
+
+// Simulação de Login
+if (formLogin) {
+  formLogin.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value;
+    
+    // Usando o sistema de notificação já existente no seu script.js
+    carrinho.mostrarNotificacao(`Bem-vindo, ${email}!`, 'success');
+    
+    // Altera o texto do menu para "Perfil"
+    linkLogin.innerHTML = `<i class="fas fa-user-check me-2"></i>Minha Conta`;
+    
+    modalLogin.classList.add('hidden');
+  });
+}

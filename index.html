@@ -19,13 +19,7 @@
       </button>
       <div class="navbar-menu" id="navbar-menu">
         <ul class="navbar-nav">
-       <li>
-    <a class="nav-link" href="#home">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 me-2" style="width: 1.25rem; height: 1.25rem; vertical-align: middle; display: inline-block;">
-            <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-        </svg>Home
-    </a>
-</li>
+
           <li><a class="nav-link" href="cardapio.html"><i class="fas fa-utensils me-2"></i>Cardápio</a></li>
           <li>
     <a class="nav-link" href="#destaques">
@@ -40,6 +34,11 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
         </svg>Contato
     </a>
+</li>
+<li>
+  <a class="nav-link" href="#" id="link-login">
+    <i class="fas fa-user-circle me-2"></i>Entrar
+  </a>
 </li>
             <a class="" href="#" id="link-pedidos">
             </a>
@@ -88,7 +87,7 @@
       <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="1 de 4">
     <div class="carousel-overlay"></div>
 
-        <img src="Img.png" alt="Grupo de amigos felizes comendo em uma mesa de restaurante" loading="lazy">
+        <img src="https://github.com/juzeexs/Lanches-Bebidas/blob/master/Img.png?raw=true" alt="Grupo de amigos felizes comendo em uma mesa de restaurante" loading="lazy">
       </div>
       <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="4 de 4">
         <img src="https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/9f981d107438131.5fa710601b734.png" alt="Grupo de amigos felizes comendo em uma mesa de restaurante" loading="lazy">
@@ -242,7 +241,29 @@
       </div>
     </div>
   </footer>
+<div id="modal-login" class="modal-overlay hidden">
+  <div class="modal-content login-modal">
+    <div class="modal-header">
+      <h4><i class="fas fa-sign-in-alt me-2"></i>Aceder à Conta</h4>
+      <button class="btn-close" id="fechar-login">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="form-login" class="form-checkout">
+        <div class="form-group">
+          <label>E-mail</label>
+          <input type="email" id="login-email" placeholder="seu@email.com" required>
+        </div>
+        <div class="form-group">
+          <label>Palavra-passe</label>
+          <input type="password" id="login-senha" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn-primary w-100 mt-3">Entrar</button>
+      </form>
+      <p class="text-center mt-3">Não tem conta? <a href="#" style="color: var(--primary)">Registe-se</a></p>
+    </div>
   </div>
+</div>
+</div>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/ol@v10.6.0/dist/ol.js"></script>
 <script src="script.js"></script>
