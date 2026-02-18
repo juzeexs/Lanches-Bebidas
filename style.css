@@ -1190,3 +1190,117 @@ footer {
   border-radius: 8px;
   border: 1px solid #ddd;
 }
+/* ========================================
+   MELHORIAS v2.0
+   ======================================== */
+
+/* Font import */
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
+
+body {
+  font-family: 'Sora', 'Segoe UI', sans-serif;
+}
+
+.navbar-brand {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.card-title, .section-title, .price {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+}
+
+/* Hero subtitle */
+.hero-subtitle {
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.85);
+  margin-top: 10px;
+}
+
+/* Banner de Promoção */
+.promo-banner {
+  background: linear-gradient(135deg, #1a1a1a 0%, #333 50%, #1a1a1a 100%);
+  color: #fff;
+  text-align: center;
+  padding: 14px 20px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.promo-banner i {
+  color: #ffc107;
+}
+
+.promo-banner strong {
+  color: #ffc107;
+  font-family: 'JetBrains Mono', monospace;
+  background: rgba(255,193,7,0.15);
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,193,7,0.3);
+}
+
+.promo-banner-cta {
+  background: #ffc107;
+  color: #1a1a1a;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 13px;
+  transition: 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.promo-banner-cta:hover {
+  background: #e6ac00;
+  transform: scale(1.04);
+}
+
+/* Feature box melhorado */
+.feature-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #ffc107;
+}
+
+/* Stat item com animação de delay escalonado */
+.stat-item:nth-child(1) { animation-delay: 0.1s; }
+.stat-item:nth-child(2) { animation-delay: 0.25s; }
+.stat-item:nth-child(3) { animation-delay: 0.4s; }
+.stat-item:nth-child(4) { animation-delay: 0.55s; }
+
+/* Nav link position relative para dropdown */
+.navbar-nav li {
+  position: relative;
+}
+
+/* mt-3 */
+.mt-3 { margin-top: 1rem; }
+
+/* Scrollbar global */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #111; }
+::-webkit-scrollbar-thumb { background: #ffc107; border-radius: 10px; }
+
+/* Focus visible global */
+:focus-visible {
+  outline: 2px solid #ffc107;
+  outline-offset: 2px;
+}
+
+/* Btn comprar melhoria */
+.btn-comprar {
+  transition: background 0.25s, transform 0.15s;
+}
+.btn-comprar:active {
+  transform: scale(0.97);
+}
