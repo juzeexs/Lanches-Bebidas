@@ -58,10 +58,10 @@ class SistemaAuth {
 // ========================================
 class CarrinhoCompras {
   constructor() {
-    this.itens = [];
+    this.itens = JSON.parse(localStorage.getItem('lb_carrinho_itens') || '[]');
     this.etapaAtual = 1;
-    this.dadosCheckout = { endereco: {}, pagamento: {} };
-    this.cupomAplicado = null;
+    this.dadosCheckout = JSON.parse(localStorage.getItem('lb_carrinho_checkout') || '{"endereco":{},"pagamento":{}}');
+    this.cupomAplicado = JSON.parse(localStorage.getItem('lb_carrinho_cupom') || 'null');
     this.taxaEntrega = 5.00;
     this._pixTimer = null; // FIX #15
     this.cuponsValidos = {
@@ -71,10 +71,17 @@ class CarrinhoCompras {
     };
   }
 
+  _salvarCarrinho() {
+    localStorage.setItem('lb_carrinho_itens', JSON.stringify(this.itens));
+    localStorage.setItem('lb_carrinho_checkout', JSON.stringify(this.dadosCheckout));
+    localStorage.setItem('lb_carrinho_cupom', JSON.stringify(this.cupomAplicado));
+  }
+
   adicionarItem(nome, preco, imagem = '') {
     const existente = this.itens.find(i => i.nome === nome);
     if (existente) { existente.quantidade++; }
     else { this.itens.push({ id: Date.now(), nome, preco: parseFloat(preco), quantidade: 1, imagem }); }
+    this._salvarCarrinho();
     this.atualizarContador();
     this.mostrarNotificacao('<i class="fas fa-check-circle"></i> ' + nome + ' adicionado!', 'success');
   }
@@ -84,6 +91,7 @@ class CarrinhoCompras {
     if (idx === -1) return;
     const nome = this.itens[idx].nome;
     this.itens.splice(idx, 1);
+    this._salvarCarrinho();
     this.atualizarContador();
     this._atualizarCorpo(); // FIX #8
     this.mostrarNotificacao(nome + ' removido', 'info');
@@ -97,6 +105,7 @@ class CarrinhoCompras {
       this.itens.splice(this.itens.indexOf(item), 1);
       this.atualizarContador();
     }
+    this._salvarCarrinho();
     this._atualizarCorpo(); // FIX #8: não recria modal inteiro
   }
 
@@ -143,6 +152,7 @@ class CarrinhoCompras {
     const cupom = this.cuponsValidos[codigo.toUpperCase()];
     if (!cupom) throw new Error('Cupom inválido ou expirado.');
     this.cupomAplicado = { ...cupom, codigo: codigo.toUpperCase() };
+    this._salvarCarrinho();
     return cupom;
   }
 
@@ -325,12 +335,84 @@ class CarrinhoCompras {
 
   formPix() {
     const fmt = n => n.toFixed(2).replace('.',',');
+    const total = this.calcularTotal();
+
+    // Gerar chave PIX copia e cola (EMV format simulado)
+    const pixKey = '51994682268'; // telefone da loja
+    const merchantName = 'LANCHES E BEBIDAS';
+    const merchantCity = 'RIO GRANDE';
+    const txid = 'LB' + Date.now().toString().slice(-10);
+    const valor = total.toFixed(2);
+
+    // Montar payload PIX (formato EMV simplificado)
+    function emvField(id, value) {
+      const len = value.length.toString().padStart(2,'0');
+      return id + len + value;
+    }
+    const merchantAccountInfo = emvField('00','br.gov.bcb.pix') + emvField('01', pixKey);
+    const payload =
+      emvField('00','01') +
+      emvField('26', merchantAccountInfo) +
+      emvField('52','0000') +
+      emvField('53','986') +
+      emvField('54', valor) +
+      emvField('58','BR') +
+      emvField('59', merchantName.slice(0,25)) +
+      emvField('60', merchantCity.slice(0,15)) +
+      emvField('62', emvField('05', txid.slice(0,25)));
+
+    // CRC16 CCITT
+    function crc16(str) {
+      let crc = 0xFFFF;
+      for (let i = 0; i < str.length; i++) {
+        crc ^= str.charCodeAt(i) << 8;
+        for (let j = 0; j < 8; j++) crc = (crc & 0x8000) ? (crc << 1) ^ 0x1021 : crc << 1;
+      }
+      return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4,'0');
+    }
+    const payloadFull = payload + '6304';
+    const pixCopiaCola = payloadFull + crc16(payloadFull);
+
     return '<div class="lb-pix-container">' +
+      '<div class="lb-pix-badge"><i class="fas fa-qrcode"></i> Pagamento via PIX</div>' +
+      '<p class="lb-pix-subtitle">Escaneie o QR Code ou copie o código abaixo</p>' +
       '<div class="lb-qr-wrapper"><div id="qrcode"></div></div>' +
-      '<p class="lb-pix-info"><i class="fas fa-mobile-alt"></i> Escaneie com seu app bancário</p>' +
-      '<p class="lb-pix-value">R$ '+fmt(this.calcularTotal())+'</p>' +
-      '<div class="lb-waiting"><div class="lb-spinner"></div><span>Aguardando pagamento...</span></div>' +
+      '<p class="lb-pix-value">R$ ' + fmt(total) + '</p>' +
+
+      '<div class="lb-pix-copia-section">' +
+        '<div class="lb-pix-copia-label"><i class="fas fa-copy"></i> PIX Copia e Cola</div>' +
+        '<div class="lb-pix-copia-box">' +
+          '<textarea id="pix-copia-cola" class="lb-pix-textarea" readonly onclick="this.select()">' + pixCopiaCola + '</textarea>' +
+          '<button class="lb-btn-copiar" onclick="carrinhoPixCopiar()">' +
+            '<i class="fas fa-copy" id="icon-copiar"></i> <span id="txt-copiar">Copiar</span>' +
+          '</button>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="lb-pix-info-row">' +
+        '<div class="lb-pix-info-item"><i class="fas fa-key"></i><span>Chave PIX: <strong>' + pixKey + '</strong></span></div>' +
+        '<div class="lb-pix-info-item"><i class="fas fa-store"></i><span>' + merchantName + '</span></div>' +
+      '</div>' +
+
+      '<div class="lb-waiting"><div class="lb-spinner"></div><span>Aguardando confirmação do pagamento...</span></div>' +
+
+      '<div class="lb-pix-steps">' +
+        '<div class="lb-pix-step"><div class="lb-ps-num">1</div><span>Abra seu app bancário</span></div>' +
+        '<div class="lb-pix-step"><div class="lb-ps-num">2</div><span>Escaneie o QR Code ou cole o código</span></div>' +
+        '<div class="lb-pix-step"><div class="lb-ps-num">3</div><span>Confirme o pagamento</span></div>' +
+      '</div>' +
+
+      '<button class="lb-btn-primary" style="width:100%;margin-top:14px" onclick="carrinho.confirmarPix()">' +
+        '<i class="fas fa-check-circle"></i> Já realizei o pagamento' +
+      '</button>' +
     '</div>';
+  }
+
+  confirmarPix() {
+    if (this._pixTimer) { clearTimeout(this._pixTimer); this._pixTimer=null; }
+    this.dadosCheckout.pagamento = { tipo: 'pix' };
+    this._salvarCarrinho();
+    this.proximaEtapa();
   }
 
   formCartao() {
@@ -437,6 +519,7 @@ class CarrinhoCompras {
       uf: document.getElementById('uf').value.trim().toUpperCase(),
       referencia: document.getElementById('referencia').value.trim()
     };
+    this._salvarCarrinho();
     this.proximaEtapa();
   }
 
@@ -474,13 +557,9 @@ class CarrinhoCompras {
       c.innerHTML = this.formPix();
       setTimeout(()=>{
         const el = document.getElementById('qrcode');
-        if (el&&typeof QRCode!=='undefined') new QRCode(el,{ text:'PIX:R$'+this.calcularTotal().toFixed(2)+'#'+Date.now(), width:180, height:180, colorDark:'#000', colorLight:'#fff', correctLevel:QRCode.CorrectLevel.H });
+        const pixText = document.getElementById('pix-copia-cola')?.value || '';
+        if (el && typeof QRCode!=='undefined') new QRCode(el,{ text: pixText || 'PIX:R$'+this.calcularTotal().toFixed(2)+'#'+Date.now(), width:180, height:180, colorDark:'#000', colorLight:'#fff', correctLevel:QRCode.CorrectLevel.H });
       },100);
-      // FIX #15: salva referência para cancelar se mudar de etapa
-      this._pixTimer = setTimeout(()=>{
-        this._pixTimer=null;
-        if (this.etapaAtual===3) { this.dadosCheckout.pagamento={tipo:'pix'}; this.proximaEtapa(); }
-      },6000);
     } else if (tipo==='cartao') {
       c.innerHTML = this.formCartao();
       this._mascarasCartao();
@@ -527,6 +606,9 @@ class CarrinhoCompras {
     this.fecharModal();
     this.itens=[]; this.etapaAtual=1; this.dadosCheckout={endereco:{},pagamento:{}}; this.cupomAplicado=null;
     if (this._pixTimer) { clearTimeout(this._pixTimer); this._pixTimer=null; }
+    localStorage.removeItem('lb_carrinho_itens');
+    localStorage.removeItem('lb_carrinho_checkout');
+    localStorage.removeItem('lb_carrinho_cupom');
     this.atualizarContador();
     this.mostrarNotificacao('<i class="fas fa-heart"></i> Obrigado pela compra! Logo chegará até você.','success');
   }
@@ -545,6 +627,27 @@ const auth = new SistemaAuth();
 const carrinho = new CarrinhoCompras();
 function adicionarAoCarrinho(nome, preco, imagem='') { carrinho.adicionarItem(nome,preco,imagem); }
 function abrirModalPedidos() { carrinho.abrirCheckout(); }
+
+function carrinhoPixCopiar() {
+  const txt = document.getElementById('pix-copia-cola');
+  if (!txt) return;
+  navigator.clipboard.writeText(txt.value).then(()=>{
+    const icon = document.getElementById('icon-copiar');
+    const label = document.getElementById('txt-copiar');
+    if (icon) { icon.className='fas fa-check'; }
+    if (label) { label.textContent='Copiado!'; }
+    const btn = document.querySelector('.lb-btn-copiar');
+    if (btn) { btn.style.background='linear-gradient(135deg,#28a745,#1e7e34)'; }
+    setTimeout(()=>{
+      if (icon) icon.className='fas fa-copy';
+      if (label) label.textContent='Copiar';
+      if (btn) btn.style.background='';
+    },2500);
+  }).catch(()=>{
+    txt.select(); document.execCommand('copy');
+    carrinho.mostrarNotificacao('<i class="fas fa-copy"></i> Código copiado!','success');
+  });
+}
 
 // ========================================
 // AUTENTICAÇÃO — MODAL
@@ -889,11 +992,27 @@ estilos.textContent=`
 .lb-pay-option.selected span,.lb-pay-option:hover span{color:#1a1a1a}
 .lb-pay-form{animation:fadeIn 0.3s ease}
 .lb-pix-container{text-align:center;padding:16px 0}
-.lb-qr-wrapper{display:inline-flex;padding:14px;background:#fff;border:2px solid #eee;border-radius:14px;margin-bottom:13px}
+.lb-pix-badge{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#00a859,#007a42);color:#fff;padding:7px 18px;border-radius:20px;font-weight:700;font-size:14px;margin-bottom:8px}
+.lb-pix-subtitle{color:#777;font-size:13px;margin-bottom:14px}
+.lb-qr-wrapper{display:inline-flex;padding:14px;background:#fff;border:2px solid #eee;border-radius:14px;margin-bottom:10px}
 .lb-pix-info{color:#555;font-size:14px;margin-bottom:4px}
-.lb-pix-value{font-size:1.5rem;font-weight:700;color:#28a745;margin-bottom:13px}
-.lb-waiting{display:flex;align-items:center;justify-content:center;gap:10px;color:#ffc107;font-weight:600}
+.lb-pix-value{font-size:1.7rem;font-weight:800;color:#1a1a1a;margin-bottom:14px}
+.lb-pix-copia-section{background:#f8f9fa;border:1.5px solid #e0e0e0;border-radius:14px;padding:14px;margin-bottom:14px;text-align:left}
+.lb-pix-copia-label{font-size:12px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.lb-pix-copia-box{display:flex;gap:8px;align-items:flex-start}
+.lb-pix-textarea{flex:1;font-size:11px;font-family:monospace;border:1.5px solid #ddd;border-radius:8px;padding:10px;resize:none;height:64px;color:#333;background:#fff;cursor:pointer;word-break:break-all;line-height:1.4}
+.lb-pix-textarea:focus{outline:none;border-color:#00a859}
+.lb-btn-copiar{flex-shrink:0;background:linear-gradient(135deg,#ffc107,#e6ac00);border:none;border-radius:10px;padding:10px 14px;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;color:#1a1a1a;transition:all 0.2s;white-space:nowrap;align-self:center}
+.lb-btn-copiar:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(255,193,7,0.4)}
+.lb-pix-info-row{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;text-align:left;background:#fff;border:1.5px solid #eee;border-radius:12px;padding:12px}
+.lb-pix-info-item{display:flex;align-items:center;gap:8px;font-size:13px;color:#555}
+.lb-pix-info-item i{color:#00a859;width:16px;text-align:center}
+.lb-waiting{display:flex;align-items:center;justify-content:center;gap:10px;color:#ffc107;font-weight:600;margin-bottom:12px}
 .lb-spinner{width:18px;height:18px;border:3px solid #f3f3f3;border-top:3px solid #ffc107;border-radius:50%;animation:spin 1s linear infinite}
+.lb-pix-steps{display:flex;gap:10px;justify-content:center;margin-bottom:8px}
+.lb-pix-step{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;max-width:100px}
+.lb-ps-num{width:28px;height:28px;background:linear-gradient(135deg,#00a859,#007a42);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.lb-pix-step span{font-size:11px;color:#777;text-align:center;line-height:1.3}
 .lb-card-type-row{display:flex;gap:10px;margin-bottom:13px}
 .lb-radio{flex:1;display:flex;align-items:center;gap:8px;padding:11px;border:2px solid #eee;border-radius:10px;cursor:pointer;transition:0.2s;font-weight:500;font-size:14px}
 .lb-radio:has(input:checked){border-color:#ffc107;background:#fffdf0}
