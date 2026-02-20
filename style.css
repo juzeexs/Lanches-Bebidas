@@ -1302,3 +1302,9 @@ body {
 .btn-comprar:active {
   transform: scale(0.97);
 }
+
+@media screen and (max-width: 768px) {
+  input:focus {
+    font-size: 16px;
+  }
+}
